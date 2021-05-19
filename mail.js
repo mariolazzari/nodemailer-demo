@@ -22,7 +22,18 @@ const gmailOptions = {
   text: "Test nodemailer from gmail to office 365.",
 };
 
-// 365 options
+// https://stackoverflow.com/questions/60094539/not-able-to-send-emails-from-nodemailer-with-office365-account-in-nodejs-getting/62267653#62267653
+// office 365 smtp
+const o365Transport = nodemailer.createTransport({
+  host: "smtp-mail.outlook.com",
+  port: "587",
+  auth: { user: O365_USER, pass: O365_PASS },
+  secureConnection: false,
+  requireTLS: true,
+  tls: { ciphers: "SSLv3" },
+});
+
+// office 365 options
 const o365Options = {
   from: O365_USER,
   to: GMAIL_USER,
@@ -36,17 +47,17 @@ const sendGmail = async () => {
     await gmailTransport.sendMail(gmailOptions);
     console.log(GMAIL_USER + " writes to " + O365_USER);
   } catch (error) {
-    console.log("Email sent: " + info.response);
+    console.log("GMail error:", error);
   }
 };
 
 // from office 365 to gmail
 const send365 = async () => {
   try {
-    await gmailTransport.sendMail(o365Options);
+    await o365Transport.sendMail(o365Options);
     console.log(O365_USER + " writes to " + GMAIL_USER);
   } catch (error) {
-    console.log("Email sent: " + info.response);
+    console.log("Office 365 error:", error);
   }
 };
 
